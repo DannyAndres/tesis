@@ -9,7 +9,7 @@ export default defineNuxtPlugin(() => {
       // @ts-ignore
       console.log('Cookie not detected / auth middleware');
       console.log('-----');
-      return navigateTo('/');
+      return navigateTo('/login');
     }
   });
   addRouteMiddleware('no-auth', async () => {

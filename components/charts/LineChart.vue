@@ -78,7 +78,9 @@ const data = reactive({
 });
 
 onMounted(() => {
-  data.mounted = true;
+  setTimeout(() => {
+    data.mounted = true;
+  }, 500);
 });
 </script>
 

@@ -48,7 +48,7 @@ const submitForm = handleSubmit(async ({ email, password }) => {
   };
   const credentials = await signInUser(email, password);
   console.log(credentials);
-  //router.replace({ path: '/home' });
+  router.replace({ path: '/home' });
 });
 </script>
 

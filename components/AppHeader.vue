@@ -1,7 +1,10 @@
 <script setup lang="ts">
+const firebaseUser = useFirebaseUser();
+const router = useRouter();
+
 const signOut = async () => {
   const result = await signOutUser();
-  console.log(result);
+  router.replace({ path: '/' });
 };
 </script>
 
@@ -71,7 +74,7 @@ const signOut = async () => {
               <div
                 class="flex items-center border-l border-zinc-200 ml-6 pl-6 dark:border-zinc-800"
               >
-                <a
+                <!-- <a
                   href="https://github.com/dinokeys"
                   class="block text-zinc-400 hover:text-zinc-500 dark:hover:text-zinc-300"
                 >
@@ -91,34 +94,44 @@ const signOut = async () => {
                 </a>
                 <a
                   href="https://github.com/dinokeys"
-                  class="ml-6 block text-zinc-400 hover:text-zinc-500 dark:hover:text-zinc-300"
+                  class="ml-6 mr-4 block text-zinc-400 hover:text-zinc-500 dark:hover:text-zinc-300"
                 >
                   <img
                     class="h-8 w-8 rounded-full border border-zinc-900/10 dark:border-zinc-50/[0.06]"
                     src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
                     alt=""
                   />
-                </a>
-                <button
-                  type="button"
-                  @click.prevent="signOut()"
-                  class="block ml-4 px-2 py-1 rounded-md bg-zinc-200 hover:bg-zinc-300 text-zinc-500 hover:text-zinc-500 dark:hover:text-zinc-300"
+                </a> -->
+                <transition
+                  enter-active-class="duration-300 ease-out"
+                  enter-from-class="transform opacity-0"
+                  enter-to-class="opacity-100"
+                  leave-active-class="duration-200 ease-in"
+                  leave-from-class="opacity-100"
+                  leave-to-class="transform opacity-0"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    class="h-5 w-5"
+                  <button
+                    v-if="firebaseUser"
+                    type="button"
+                    @click.prevent="signOut()"
+                    class="block px-2 py-1 rounded-md bg-zinc-200 hover:bg-zinc-300 text-zinc-500 hover:text-zinc-500 dark:hover:text-zinc-300"
                   >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"
-                    />
-                  </svg>
-                </button>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="1.5"
+                      stroke="currentColor"
+                      class="h-5 w-5"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"
+                      />
+                    </svg>
+                  </button>
+                </transition>
               </div>
             </div>
           </transition>

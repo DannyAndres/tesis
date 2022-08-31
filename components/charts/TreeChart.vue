@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const data = reactive({
+const json = reactive({
   name: 'json',
   collapse: true,
   value: 10,
@@ -15,6 +15,7 @@ const data = reactive({
     },
   ],
 });
+
 const option = ref({
   tooltip: {
     trigger: 'item',
@@ -23,7 +24,7 @@ const option = ref({
   series: [
     {
       type: 'tree',
-      data: [data],
+      data: [json],
       top: '1%',
       left: '7%',
       bottom: '1%',
@@ -51,10 +52,21 @@ const option = ref({
     },
   ],
 });
+
+const data = reactive({
+  mounted: false,
+});
+
+onMounted(() => {
+  setTimeout(() => {
+    data.mounted = true;
+  }, 500);
+});
 </script>
 
 <template>
   <div
+    v-if="data.mounted"
     class="mb-6 bg-white rounded-md dark:bg-[#18181b] border border-zinc-900/10 dark:border-zinc-50/[0.06] overflow-hidden"
   >
     <v-chart class="chart" :option="option" />
