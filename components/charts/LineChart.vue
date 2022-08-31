@@ -72,10 +72,19 @@ const option = ref({
     },
   ],
 });
+
+const data = reactive({
+  mounted: false,
+});
+
+onMounted(() => {
+  data.mounted = true;
+});
 </script>
 
 <template>
   <div
+    v-if="data.mounted"
     class="mb-6 bg-white rounded-md dark:bg-[#18181b] border border-zinc-900/10 dark:border-zinc-50/[0.06] overflow-hidden"
   >
     <v-chart class="chart" :option="option" />

@@ -1,4 +1,8 @@
 <script setup lang="ts">
+definePageMeta({
+  middleware: ['no-auth'],
+});
+
 const router = useRouter();
 
 const { $useForm, $useField } = useNuxtApp();
