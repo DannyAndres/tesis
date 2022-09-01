@@ -4,8 +4,10 @@
 import * as pdfjslib from 'pdfjs-dist';
 // @ts-ignore
 const PDFJS = (<any>pdfjslib) as PDFJSStatic;
-PDFJS.GlobalWorkerOptions.workerSrc =
-  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+if (PDFJS.GlobalWorkerOptions) {
+  PDFJS.GlobalWorkerOptions.workerSrc =
+    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+}
 
 export default defineNuxtPlugin(() => {
   return {
