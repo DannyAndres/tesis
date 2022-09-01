@@ -24,8 +24,11 @@ const tooltips = reactive({
             </h2>
             <div class="w-full">
               <pre class="text-xs">
-                <code>
-                  {{ firebaseUser }}
+                <code>{{{
+                    id: firebaseUser.uid,
+                    email: firebaseUser.email,
+                    token: firebaseUser.stsTokenManager.accessToken
+                  } }}
                 </code>
               </pre>
             </div>

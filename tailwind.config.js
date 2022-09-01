@@ -21,6 +21,7 @@ module.exports = {
       sky: colors.sky,
       red: colors.red,
       gray: colors.gray,
+      green: colors.green,
     },
   },
   plugins: [],

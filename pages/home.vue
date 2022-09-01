@@ -2,17 +2,23 @@
 definePageMeta({
   middleware: ['auth'],
 });
+
+const data = reactive({
+  tab: 'files',
+});
+
+const changeTab = (tab) => {
+  data.tab = tab;
+};
 </script>
 
 <template>
   <div>
     <NuxtLayout name="main-container">
       <NuxtLayout name="triple-container">
-        <PagesHomeNavbar />
-        <main class="lg:col-span-9 xl:col-span-6">
-          <ChartsLineChart />
-          <ChartsTreeChart />
-        </main>
+        <PagesHomeNavbar @tab="changeTab" :active="data.tab" />
+        <PagesHomeTabsFiles :tab="data.tab" />
+        <PagesHomeTabsCharts :tab="data.tab" />
         <PagesHomeAnnouncements />
       </NuxtLayout>
     </NuxtLayout>
