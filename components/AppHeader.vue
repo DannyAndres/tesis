@@ -72,6 +72,21 @@ const signOut = async () => {
                   </li>
                 </ul>
               </nav>
+              <nav
+                v-if="firebaseUser"
+                class="text-sm leading-6 font-semibold text-zinc-700 dark:text-zinc-200"
+              >
+                <ul class="flex space-x-8">
+                  <li>
+                    <NuxtLink
+                      class="hover:text-sky-500 dark:hover:text-sky-400"
+                      to="/home"
+                    >
+                      Inicio
+                    </NuxtLink>
+                  </li>
+                </ul>
+              </nav>
               <div
                 class="flex items-center border-l border-zinc-200 ml-6 pl-6 dark:border-zinc-800"
               >
