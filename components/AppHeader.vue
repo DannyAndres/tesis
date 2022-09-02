@@ -25,19 +25,19 @@ const signOut = async () => {
             <img
               class="hidden dark:inline text-zinc-900 dark:text-white h-7 w-auto"
               src="~/assets/images/logo.png"
-              alt="Graphs"
+              alt="Tesis"
               data-v-33d85123=""
             />
             <img
               class="dark:hidden text-zinc-900 dark:text-white h-7 w-auto"
               src="~/assets/images/logo.png"
-              alt="Graphs"
+              alt="Tesis"
               data-v-33d85123=""
             />
             <h2
               class="logo-font ml-1 mr-2 text-center text-xl font-extrabold text-zinc-700 dark:text-zinc-100"
             >
-              Graphs
+              Tesis
             </h2>
           </button>
           <transition
@@ -50,6 +50,7 @@ const signOut = async () => {
           >
             <div class="relative hidden lg:flex items-center ml-auto">
               <nav
+                v-if="!firebaseUser"
                 class="text-sm leading-6 font-semibold text-zinc-700 dark:text-zinc-200"
               >
                 <ul class="flex space-x-8">

@@ -16,6 +16,7 @@
     "firebase": "^9.9.3",
     "pdfjs-dist": "^2.16.105",
     "vee-validate": "^4.6.7",
-    "vue-echarts": "^6.2.3"
+    "vue-echarts": "^6.2.3",
+    "xlsx": "^0.18.5"
   }
 }

@@ -11,26 +11,51 @@ const tooltips = reactive({
 <template>
   <aside class="hidden xl:block xl:col-span-4">
     <div class="sticky top-header space-y-4">
-      <section v-if="firebaseUser" aria-labelledby="who-to-follow-heading">
+      <section v-if="firebaseUser" aria-labelledby="trending-heading">
         <div
           class="bg-white rounded-md dark:bg-zinc-900 border border-zinc-900/10 dark:border-zinc-50/[0.06]"
         >
           <div class="p-6">
             <h2
-              id="who-to-follow-heading"
+              id="trending-heading"
               class="text-base font-medium text-gray-900"
             >
-              Datos del usuario
+              Datos del Usuario
             </h2>
-            <div class="w-full">
-              <pre class="text-xs">
-                <code>{{{
-                    id: firebaseUser.uid,
-                    email: firebaseUser.email,
-                    token: firebaseUser.stsTokenManager.accessToken
-                  } }}
-                </code>
-              </pre>
+            <div class="mt-3 flow-root">
+              <ul role="list" class="-my-4 divide-y divide-gray-200">
+                <li class="flex py-4 space-x-3">
+                  <div class="flex-shrink-0">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="1.5"
+                      stroke="currentColor"
+                      class="w-8 h-8"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
+                    </svg>
+                  </div>
+                  <div class="min-w-0 flex-1">
+                    <p class="text-xs text-gray-700 font-bold">
+                      {{ firebaseUser.uid }}
+                    </p>
+                    <p class="text-sm text-gray-800">
+                      {{ firebaseUser.email }}
+                    </p>
+                    <p class="text-xs break-all text-gray-800">
+                      {{ firebaseUser.stsTokenManager.accessToken }}
+                    </p>
+                  </div>
+                </li>
+
+                <!-- More posts... -->
+              </ul>
             </div>
           </div>
         </div>

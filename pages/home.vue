@@ -18,6 +18,7 @@ const changeTab = (tab) => {
       <NuxtLayout name="triple-container">
         <PagesHomeNavbar @tab="changeTab" :active="data.tab" />
         <PagesHomeTabsFiles :tab="data.tab" />
+        <PagesHomeTabsExcel :tab="data.tab" />
         <PagesHomeTabsCharts :tab="data.tab" />
         <PagesHomeAnnouncements />
       </NuxtLayout>

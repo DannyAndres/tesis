@@ -7,7 +7,7 @@
         <h2
           class="my-6 text-center text-3xl font-extrabold text-zinc-700 dark:text-zinc-100"
         >
-          Graphs
+          Tesis
         </h2>
       </div>
     </NuxtLayout>

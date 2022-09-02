@@ -21,13 +21,13 @@ body {
           <img
             class="text-zinc-900 h-14 w-auto"
             src="~/assets/images/logo.png"
-            alt="Graphs"
+            alt="Tesis"
             data-v-33d85123=""
           />
           <h2
             class="logo-font ml-1 mr-2 text-center text-5xl font-extrabold text-zinc-700 dark:text-zinc-100"
           >
-            Graphs
+            Tesis
           </h2>
         </div>
         <svg
