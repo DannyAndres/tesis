@@ -7,6 +7,7 @@ export interface Student {
   CORRECTOR: string;
   CORRECTOR_1: string;
   'PROFESOR GUIA': string;
+  AÑO: string;
 }
 
 export interface Thesis {

@@ -35,11 +35,13 @@ const searchFile = (index) => {
     data.filesToText[index].numPages === data.filesToText[index].array.length
   ) {
     let txt = data.filesToText[index].array.join(' ').toLowerCase();
-    let array_temp = txt.split('resumen');
-    if (array_temp.length > 1) {
-      txt = array_temp[1].split('palabras claves')[0];
-      data.filesToText[index].summary = txt;
-      dataStore.updateTheses(data.filesToText);
+    if (txt.toLowerCase().includes('resumen')) {
+      let array_temp = txt.toLowerCase().split('resumen');
+      if (array_temp.length > 1) {
+        txt = array_temp[1].toLowerCase().split('palabras claves')[0];
+        data.filesToText[index].summary = txt;
+        dataStore.updateTheses(data.filesToText);
+      }
     }
   }
 };
@@ -77,43 +79,16 @@ const processFiles = async () => {
         await pdf.promise.then(async (response) => {
           var maxPages = response.numPages;
           data.progress += maxPages;
-          let student =
-            file.name
-              .toLowerCase()
-              .replace('.pdf', '')
-              .replace('resumen_', '')
-              .split('_')
-              .join(' ')
-              .split(' ')[2] +
-            ' ' +
-            file.name
-              .toLowerCase()
-              .replace('.pdf', '')
-              .replace('resumen_', '')
-              .split('_')
-              .join(' ')
-              .split(' ')[3] +
-            ' ' +
-            file.name
-              .toLowerCase()
-              .replace('.pdf', '')
-              .replace('resumen_', '')
-              .split('_')
-              .join(' ')
-              .split(' ')[0] +
-            ' ' +
-            file.name
-              .toLowerCase()
-              .replace('.pdf', '')
-              .replace('resumen_', '')
-              .split('_')
-              .join(' ')
-              .split(' ')[1];
           data.filesToText[fileIndex] = {
             array: [],
             numPages: maxPages,
             summary: '',
-            student: student,
+            student: file.name
+              .toLowerCase()
+              .replace('.pdf', '')
+              .replace('resumen_', '')
+              .split('_')
+              .join(' '),
           };
           for (var textPage = 1; textPage <= maxPages; textPage++) {
             var page = response.getPage(textPage);

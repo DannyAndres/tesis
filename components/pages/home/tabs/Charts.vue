@@ -22,7 +22,7 @@ const processed = reactive({
     }
     return data.theses.map((thesis) => {
       thesis.match = data.students.find((student) => {
-        return similarity(thesis.student, student.AUTOR) > 40;
+        return similarity(thesis.student, student.AUTOR) > 60;
       });
       return thesis;
     });

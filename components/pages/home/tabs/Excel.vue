@@ -25,12 +25,22 @@ const json = computed(() => {
   }
   return data.json.filter((item) => {
     return (
-      item.AUTOR.toLowerCase().includes(data.search.toLowerCase()) ||
-      item['TÍTULO'].toLowerCase().includes(data.search.toLowerCase()) ||
-      item.CARRERA.toLowerCase().includes(data.search.toLowerCase()) ||
-      item.CORRECTOR.toLowerCase().includes(data.search.toLowerCase()) ||
-      item.CORRECTOR_1.toLowerCase().includes(data.search.toLowerCase()) ||
-      item['PROFESOR GUIA'].toLowerCase().includes(data.search.toLowerCase())
+      (item.AUTOR &&
+        item.AUTOR.toLowerCase().includes(data.search.toLowerCase())) ||
+      (item['TÍTULO'] &&
+        item['TÍTULO'].toLowerCase().includes(data.search.toLowerCase())) ||
+      (item.CARRERA &&
+        item.CARRERA.toLowerCase().includes(data.search.toLowerCase())) ||
+      (item.CORRECTOR &&
+        item.CORRECTOR.toLowerCase().includes(data.search.toLowerCase())) ||
+      (item.CORRECTOR_1 &&
+        item.CORRECTOR_1.toLowerCase().includes(data.search.toLowerCase())) ||
+      (item['PROFESOR GUIA'] &&
+        item['PROFESOR GUIA']
+          .toLowerCase()
+          .includes(data.search.toLowerCase())) ||
+      (item['AÑO'] &&
+        item['AÑO'].toLowerCase().includes(data.search.toLowerCase()))
     );
   });
 });
@@ -50,10 +60,19 @@ const processFiles = async () => {
     reader.onload = async () => {
       // @ts-ignore
       const workbook = xlsx.read(reader.result, { type: 'array' });
-      const sheetName = workbook.SheetNames[0];
-      const worksheet = workbook.Sheets[sheetName];
-      const json = xlsx.utils.sheet_to_json(worksheet);
-      data.json = json;
+      let json_temp = [];
+      await workbook.SheetNames.forEach(async (sheet) => {
+        const worksheet = workbook.Sheets[sheet];
+        const json = await xlsx.utils.sheet_to_json(worksheet);
+        if (sheet === '2021') {
+          console.log(json);
+        }
+        json.forEach((e) => {
+          e['AÑO'] = sheet;
+          json_temp.push(e);
+        });
+      });
+      data.json = json_temp;
       dataStore.updateStudents(data.json);
     };
     reader.readAsArrayBuffer(file);
@@ -222,7 +241,7 @@ const processFiles = async () => {
             Info
           </div>
         </div>
-        <div v-if="data.json" class="w-full">
+        <div v-if="json" class="w-full">
           <div
             v-for="(item, itemIndex) in json"
             :key="itemIndex"
@@ -230,9 +249,10 @@ const processFiles = async () => {
           >
             <div
               v-if="
-                (!item.AUTOR.toLowerCase().includes(
-                  data.search.toLowerCase()
-                ) &&
+                (item.AUTOR &&
+                  !item.AUTOR.toLowerCase().includes(
+                    data.search.toLowerCase()
+                  ) &&
                   data.search !== '') ||
                 data.search === ''
               "
@@ -242,6 +262,7 @@ const processFiles = async () => {
             </div>
             <div
               v-if="
+                item.AUTOR &&
                 item.AUTOR.toLowerCase().includes(data.search.toLowerCase()) &&
                 data.search !== ''
               "
@@ -270,9 +291,10 @@ const processFiles = async () => {
             </div>
             <div
               v-if="
-                (!item['TÍTULO']
-                  .toLowerCase()
-                  .includes(data.search.toLowerCase()) &&
+                (item['TÍTULO'] &&
+                  !item['TÍTULO']
+                    .toLowerCase()
+                    .includes(data.search.toLowerCase()) &&
                   data.search !== '') ||
                 data.search === ''
               "
@@ -282,9 +304,11 @@ const processFiles = async () => {
             </div>
             <div
               v-if="
+                item['TÍTULO'] &&
                 item['TÍTULO']
                   .toLowerCase()
-                  .includes(data.search.toLowerCase()) && data.search !== ''
+                  .includes(data.search.toLowerCase()) &&
+                data.search !== ''
               "
               class="w-1/3 text-left text-xs font-medium text-gray-700 pr-4"
             >
@@ -316,9 +340,10 @@ const processFiles = async () => {
 
               <span
                 v-if="
-                  (!item.CARRERA.toLowerCase().includes(
-                    data.search.toLowerCase()
-                  ) &&
+                  (item.CARRERA &&
+                    !item.CARRERA.toLowerCase().includes(
+                      data.search.toLowerCase()
+                    ) &&
                     data.search !== '') ||
                   data.search === ''
                 "
@@ -327,9 +352,11 @@ const processFiles = async () => {
               </span>
               <span
                 v-if="
+                  item.CARRERA &&
                   item.CARRERA.toLowerCase().includes(
                     data.search.toLowerCase()
-                  ) && data.search !== ''
+                  ) &&
+                  data.search !== ''
                 "
               >
                 <span>{{
@@ -360,9 +387,10 @@ const processFiles = async () => {
 
                 <span
                   v-if="
-                    (!item.CORRECTOR.toLowerCase().includes(
-                      data.search.toLowerCase()
-                    ) &&
+                    (item.CORRECTOR &&
+                      !item.CORRECTOR.toLowerCase().includes(
+                        data.search.toLowerCase()
+                      ) &&
                       data.search !== '') ||
                     data.search === ''
                   "
@@ -371,9 +399,11 @@ const processFiles = async () => {
                 </span>
                 <span
                   v-if="
+                    item.CORRECTOR &&
                     item.CORRECTOR.toLowerCase().includes(
                       data.search.toLowerCase()
-                    ) && data.search !== ''
+                    ) &&
+                    data.search !== ''
                   "
                 >
                   <span>{{
@@ -406,9 +436,10 @@ const processFiles = async () => {
                 <span class="text-xs text-gray-500">2)</span>
                 <span
                   v-if="
-                    (!item.CORRECTOR_1.toLowerCase().includes(
-                      data.search.toLowerCase()
-                    ) &&
+                    (item.CORRECTOR_1 &&
+                      !item.CORRECTOR_1.toLowerCase().includes(
+                        data.search.toLowerCase()
+                      ) &&
                       data.search !== '') ||
                     data.search === ''
                   "
@@ -417,9 +448,11 @@ const processFiles = async () => {
                 </span>
                 <span
                   v-if="
+                    item.CORRECTOR_1 &&
                     item.CORRECTOR_1.toLowerCase().includes(
                       data.search.toLowerCase()
-                    ) && data.search !== ''
+                    ) &&
+                    data.search !== ''
                   "
                 >
                   <span>{{
@@ -451,9 +484,10 @@ const processFiles = async () => {
               <span class="text-xs text-gray-500">Profesor Guia</span>
               <span
                 v-if="
-                  (!item['PROFESOR GUIA']
-                    .toLowerCase()
-                    .includes(data.search.toLowerCase()) &&
+                  (item['PROFESOR GUIA'] &&
+                    !item['PROFESOR GUIA']
+                      .toLowerCase()
+                      .includes(data.search.toLowerCase()) &&
                     data.search !== '') ||
                   data.search === ''
                 "
@@ -462,9 +496,11 @@ const processFiles = async () => {
               </span>
               <span
                 v-if="
+                  item['PROFESOR GUIA'] &&
                   item['PROFESOR GUIA']
                     .toLowerCase()
-                    .includes(data.search.toLowerCase()) && data.search !== ''
+                    .includes(data.search.toLowerCase()) &&
+                  data.search !== ''
                 "
               >
                 <span>{{
@@ -484,6 +520,49 @@ const processFiles = async () => {
                   <span class="lowercase"
                     >{{
                       item['PROFESOR GUIA']
+                        .toLowerCase()
+                        .split(data.search.toLowerCase())[word]
+                    }}
+                  </span>
+                </span>
+              </span>
+              <span class="text-xs text-gray-500">Año</span>
+              <span
+                v-if="
+                  (item['AÑO'] &&
+                    !item['AÑO']
+                      .toLowerCase()
+                      .includes(data.search.toLowerCase()) &&
+                    data.search !== '') ||
+                  data.search === ''
+                "
+              >
+                {{ item['AÑO'] }}
+              </span>
+              <span
+                v-if="
+                  item['AÑO'] &&
+                  item['AÑO']
+                    .toLowerCase()
+                    .includes(data.search.toLowerCase()) &&
+                  data.search !== ''
+                "
+              >
+                <span>{{
+                  item['AÑO'].toLowerCase().split(data.search.toLowerCase())[0]
+                }}</span>
+                <span
+                  v-for="(word, wordIndex) in item['AÑO']
+                    .toLowerCase()
+                    .split(data.search.toLowerCase()).length - 1"
+                  :key="wordIndex"
+                >
+                  <span class="bg-yellow-100">
+                    {{ data.search.toLowerCase() }}</span
+                  >
+                  <span class="lowercase"
+                    >{{
+                      item['AÑO']
                         .toLowerCase()
                         .split(data.search.toLowerCase())[word]
                     }}
