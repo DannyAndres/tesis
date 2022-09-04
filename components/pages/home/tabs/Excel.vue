@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { useDataStore } from '~/store/data';
+
+const dataStore = useDataStore();
 const { $xlsx } = useNuxtApp();
 const xlsx = $xlsx();
 
@@ -51,6 +54,7 @@ const processFiles = async () => {
       const worksheet = workbook.Sheets[sheetName];
       const json = xlsx.utils.sheet_to_json(worksheet);
       data.json = json;
+      dataStore.updateStudents(data.json);
     };
     reader.readAsArrayBuffer(file);
   }

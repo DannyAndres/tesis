@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { useDataStore } from '~/store/data';
+
+const dataStore = useDataStore();
 const { $pdfjsLib } = useNuxtApp();
 const pdfjsLib = $pdfjsLib();
 
@@ -29,17 +32,14 @@ const updateFiles = () => {
 const searchFile = (index) => {
   if (
     data.filesToText[index] !== 'error' &&
-    data.filesToText[index].pages === data.filesToText[index].array.length
+    data.filesToText[index].numPages === data.filesToText[index].array.length
   ) {
     let txt = data.filesToText[index].array.join(' ').toLowerCase();
     let array_temp = txt.split('resumen');
     if (array_temp.length > 1) {
       txt = array_temp[1].split('palabras claves')[0];
       data.filesToText[index].summary = txt;
-      console.log({
-        title: data.filesToText[index].title,
-        summary: data.filesToText[index].summary,
-      });
+      dataStore.updateTheses(data.filesToText);
     }
   }
 };
@@ -77,11 +77,43 @@ const processFiles = async () => {
         await pdf.promise.then(async (response) => {
           var maxPages = response.numPages;
           data.progress += maxPages;
+          let student =
+            file.name
+              .toLowerCase()
+              .replace('.pdf', '')
+              .replace('resumen_', '')
+              .split('_')
+              .join(' ')
+              .split(' ')[2] +
+            ' ' +
+            file.name
+              .toLowerCase()
+              .replace('.pdf', '')
+              .replace('resumen_', '')
+              .split('_')
+              .join(' ')
+              .split(' ')[3] +
+            ' ' +
+            file.name
+              .toLowerCase()
+              .replace('.pdf', '')
+              .replace('resumen_', '')
+              .split('_')
+              .join(' ')
+              .split(' ')[0] +
+            ' ' +
+            file.name
+              .toLowerCase()
+              .replace('.pdf', '')
+              .replace('resumen_', '')
+              .split('_')
+              .join(' ')
+              .split(' ')[1];
           data.filesToText[fileIndex] = {
             array: [],
-            pages: maxPages,
+            numPages: maxPages,
             summary: '',
-            title: file.name.replace('.pdf', ''),
+            student: student,
           };
           for (var textPage = 1; textPage <= maxPages; textPage++) {
             var page = response.getPage(textPage);
@@ -97,7 +129,7 @@ const processFiles = async () => {
                 data.acum += 1;
                 data.progress = Math.floor((data.acum * 100) / data.total);
                 if (
-                  data.filesToText[fileIndex].pages ===
+                  data.filesToText[fileIndex].numPages ===
                   data.filesToText[fileIndex].array.length
                 ) {
                   searchFile(fileIndex);
@@ -207,7 +239,7 @@ const fileProgress = (state, total) => {
                               (prev, curr, index) =>
                                 prev +
                                 (index <= fileIndex && curr !== 'error'
-                                  ? curr.pages
+                                  ? curr.numPages
                                   : 0),
                               0
                             ) > data.acum
@@ -218,7 +250,7 @@ const fileProgress = (state, total) => {
                               (prev, curr, index) =>
                                 prev +
                                 (index <= fileIndex && curr !== 'error'
-                                  ? curr.pages
+                                  ? curr.numPages
                                   : 0),
                               0
                             ) <= data.acum
@@ -251,7 +283,7 @@ const fileProgress = (state, total) => {
                             (prev, curr, index) =>
                               prev +
                               (index <= fileIndex && curr !== 'error'
-                                ? curr.pages
+                                ? curr.numPages
                                 : 0),
                             0
                           ) > data.acum
@@ -266,7 +298,7 @@ const fileProgress = (state, total) => {
                             (prev, curr, index) =>
                               prev +
                               (index <= fileIndex && curr !== 'error'
-                                ? curr.pages
+                                ? curr.numPages
                                 : 0),
                             0
                           ) <= data.acum
@@ -286,11 +318,11 @@ const fileProgress = (state, total) => {
                                 (prev, curr, index) =>
                                   prev +
                                   (index < fileIndex && curr !== 'error'
-                                    ? curr.pages
+                                    ? curr.numPages
                                     : 0),
                                 0
                               ),
-                            data.filesToText[fileIndex].pages
+                            data.filesToText[fileIndex].numPages
                           )
                         }}</span
                       >
@@ -386,10 +418,10 @@ const fileProgress = (state, total) => {
       >
         <div class="m-4">
           <label
-            v-if="file !== 'error'"
+            v-if="file !== 'error' && file && file.student"
             class="inline-block mb-2 font-semibold text-gray-500"
           >
-            {{ fileIndex + 1 }}) {{ file.title }}
+            {{ fileIndex + 1 }}) {{ file.student }}
           </label>
           <label
             v-if="file === 'error'"
@@ -398,7 +430,7 @@ const fileProgress = (state, total) => {
             {{ fileIndex + 1 }}) Archivo no procesado
           </label>
           <div
-            v-if="file !== 'error'"
+            v-if="file !== 'error' && file && file.summary"
             class="flex items-center text-sm justify-left w-full"
           >
             {{ file.summary }}
