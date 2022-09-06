@@ -64,9 +64,6 @@ const processFiles = async () => {
       await workbook.SheetNames.forEach(async (sheet) => {
         const worksheet = workbook.Sheets[sheet];
         const json = await xlsx.utils.sheet_to_json(worksheet);
-        if (sheet === '2021') {
-          console.log(json);
-        }
         json.forEach((e) => {
           e['AÑO'] = sheet;
           json_temp.push(e);

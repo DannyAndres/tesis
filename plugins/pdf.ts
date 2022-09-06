@@ -7,6 +7,10 @@ const PDFJS = (<any>pdfjslib) as PDFJSStatic;
 if (PDFJS.GlobalWorkerOptions) {
   PDFJS.GlobalWorkerOptions.workerSrc =
     'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+  PDFJS.disableTextLayer = true;
+  PDFJS.disableWorker = true;
+  PDFJS.disableFontFace = true;
+  PDFJS.renderInteractiveForms = true;
 }
 
 export default defineNuxtPlugin(() => {

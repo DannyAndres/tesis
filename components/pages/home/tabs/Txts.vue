@@ -2,8 +2,6 @@
 import { useDataStore } from '~/store/data';
 
 const dataStore = useDataStore();
-const { $pdfjsLib } = useNuxtApp();
-const pdfjsLib = $pdfjsLib();
 
 const props = defineProps({
   tab: {
@@ -59,53 +57,31 @@ const readFile = async (fileIndex) => {
   if (file.size < data.limit) {
     let reader = new FileReader();
     reader.onload = async () => {
-      // @ts-ignore
-      let bytes = new Uint8Array(reader.result);
-      let docInitParams = {
-        data: bytes,
+      let page = reader.result;
+      data.filesToText[fileIndex] = {
+        array: [],
+        numPages: 1,
+        summary: '',
+        student: file.name
+          .toLowerCase()
+          .replace('.txt', '')
+          .replace('resumen_', '')
+          .replace('_00001', '')
+          .split('_')
+          .join(' '),
       };
-
-      let pdf = pdfjsLib.getDocument(docInitParams);
-      await pdf.promise.then(async (response) => {
-        var maxPages = response.numPages;
-        data.progress += maxPages;
-        data.filesToText[fileIndex] = {
-          array: [],
-          numPages: maxPages,
-          summary: '',
-          student: file.name
-            .toLowerCase()
-            .replace('.pdf', '')
-            .replace('resumen_', '')
-            .split('_')
-            .join(' '),
-        };
-        for (var textPage = 1; textPage <= maxPages; textPage++) {
-          var page = response.getPage(textPage);
-          await page.then(async (page) => {
-            var textContent = page.getTextContent();
-            await textContent.then((text) => {
-              let pageToText = text.items
-                .map(function (s) {
-                  return s.str;
-                })
-                .join('');
-              data.filesToText[fileIndex].array[textPage - 1] = pageToText;
-              data.acum += 1;
-              data.progress = Math.floor((data.acum * 100) / data.total);
-              if (
-                data.filesToText[fileIndex].numPages ===
-                data.filesToText[fileIndex].array.length
-              ) {
-                searchFile(fileIndex);
-              }
-            });
-          });
-        }
-        readFile(fileIndex + 1);
-      });
+      data.filesToText[fileIndex].array[0] = page;
+      data.acum += 1;
+      data.progress = Math.floor((data.acum * 100) / data.total);
+      if (
+        data.filesToText[fileIndex].numPages ===
+        data.filesToText[fileIndex].array.length
+      ) {
+        searchFile(fileIndex);
+      }
+      readFile(fileIndex + 1);
     };
-    reader.readAsArrayBuffer(file);
+    reader.readAsText(file);
   } else {
     data.filesToText[fileIndex] = 'error';
   }
@@ -113,25 +89,8 @@ const readFile = async (fileIndex) => {
 
 const processFiles = async () => {
   data.progress = 0;
-  data.total = 0;
+  data.total = data.files.length;
   data.acum = 0;
-  for (let fileIndex = 0; fileIndex < data.files.length; fileIndex++) {
-    let file = data.files[fileIndex];
-    if (file.size < data.limit) {
-      let reader = new FileReader();
-      reader.onload = async () => {
-        // @ts-ignore
-        let bytes = new Uint8Array(reader.result);
-        let docInitParams = { data: bytes };
-        let pdf = pdfjsLib.getDocument(docInitParams);
-        await pdf.promise.then(async (response) => {
-          var maxPages = response.numPages;
-          data.total += maxPages;
-        });
-      };
-      reader.readAsArrayBuffer(file);
-    }
-  }
   await readFile(0);
 };
 
@@ -171,7 +130,7 @@ const resetModal = () => {
 </script>
 
 <template>
-  <main v-if="props.tab === 'files'" class="lg:col-span-9 xl:col-span-6">
+  <main v-if="props.tab === 'txt'" class="lg:col-span-9 xl:col-span-6">
     <Modal
       :trigger="data.modal.status"
       :title="data.modal.title"
@@ -186,7 +145,7 @@ const resetModal = () => {
       >
         <div class="m-4">
           <label class="inline-block mb-2 text-gray-500"
-            >Sube un archivo pdf</label
+            >Sube un archivo txt</label
           >
           <div class="flex items-center justify-center w-full">
             <label
@@ -213,7 +172,7 @@ const resetModal = () => {
                 <p
                   class="pt-1 text-sm tracking-wider text-gray-400 group-hover:text-gray-600"
                 >
-                  Selecciona un archivo pdf
+                  Selecciona un archivo txt
                 </p>
               </div>
               <div
@@ -362,7 +321,7 @@ const resetModal = () => {
                 ref="DocumentFile"
                 @change="updateFiles"
                 type="file"
-                accept=".pdf"
+                accept=".txt"
                 multiple
                 class="opacity-0"
               />

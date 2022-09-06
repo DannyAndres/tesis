@@ -20,12 +20,33 @@ const processed = reactive({
     if (!data.theses || !data.students) {
       return null;
     }
-    return data.theses.map((thesis) => {
-      thesis.match = data.students.find((student) => {
-        return similarity(thesis.student, student.AUTOR) > 60;
-      });
-      return thesis;
+    let output = [];
+    let accept = 90;
+    data.theses.forEach((thesis) => {
+      if (
+        data.students.find((student) => {
+          return similarity(thesis.student, student.AUTOR) > accept;
+        })
+      ) {
+        let temp = thesis;
+        temp.data = data.students.find((student) => {
+          return similarity(thesis.student, student.AUTOR) > accept;
+        });
+        output.push(temp);
+      }
     });
+    return output;
+  }),
+  years: computed(() => {
+    // year separation
+    let years = [];
+    processed.matches.forEach((e) => {
+      if (!years.includes(e['data'].AÑO)) {
+        years.push(e['data'].AÑO);
+      }
+    });
+    years.sort();
+    return years;
   }),
 });
 
@@ -75,34 +96,102 @@ const similarity = (s1, s2) => {
 <template>
   <main v-if="props.tab === 'charts'" class="lg:col-span-9 xl:col-span-6">
     <div
-      class="mb-6 p-4 flex flex-col justify-start items-start bg-white rounded-md dark:bg-[#18181b] border border-zinc-900/10 dark:border-zinc-50/[0.06] overflow-hidden"
+      class="mb-6 p-4 flex flex-row justify-between items-start bg-white rounded-md dark:bg-[#18181b] border border-zinc-900/10 dark:border-zinc-50/[0.06] overflow-hidden"
     >
-      <h2
-        id="trending-heading"
-        class="mb-2 text-base font-medium text-gray-900"
-      >
-        Datos generales
-      </h2>
-      <span v-if="data.theses"
-        >Archivos procesados: <strong>{{ data.theses.length }}</strong></span
-      >
-      <span v-if="data.theses"
-        >Con resumen:
-        <strong>{{ data.theses.filter((e) => e.summary).length }}</strong></span
-      >
-      <span v-if="processed.matches"
-        >Académicos encontrados:
-        <strong
-          >{{ processed.matches.filter((e) => e.match).length }}/{{
-            data.students.length
-          }}</strong
-        ></span
-      >
-      <pre>
-        {{ processed.matches.filter((e) => e.match) }}
-      </pre>
+      <div class="flex flex-col justify-start items-start">
+        <h2 id="trending-heading" class="text-base font-medium text-gray-900">
+          Datos generales
+        </h2>
+        <span class="mt-2" v-if="data.theses"
+          >Archivos procesados:
+          <strong
+            >{{ data.theses.filter((e) => e.summary).length }}/{{
+              data.theses.length
+            }}</strong
+          ></span
+        >
+        <span v-if="processed.matches"
+          >Académicos encontrados:
+          <strong
+            >{{ processed.matches.length }}/{{ data.students.length }}</strong
+          ></span
+        >
+      </div>
+      <div class="w-2/6 flex flex-col justify-center items-center">
+        <div
+          v-if="data.theses && processed.matches && data.students"
+          class="w-full flex flex-col justify-between items-center"
+        >
+          <div class="w-full bg-gray-200 rounded-md mb-2">
+            <div
+              class="transition-all text-xs font-medium text-sky-100 text-center p-0.5 leading-none rounded-md"
+              :style="
+                'width: ' +
+                Math.floor(
+                  (data.theses.filter((e) => e.summary).length * 100) /
+                    data.theses.length
+                ) +
+                '%'
+              "
+              :class="
+                Math.floor(
+                  (data.theses.filter((e) => e.summary).length * 100) /
+                    data.theses.length
+                ) >= 90
+                  ? 'bg-green-500 text-green-100'
+                  : Math.floor(
+                      (data.theses.filter((e) => e.summary).length * 100) /
+                        data.theses.length
+                    ) >= 50
+                  ? 'bg-sky-700 text-sky-100'
+                  : 'bg-red-500 text-red-100'
+              "
+            >
+              {{
+                Math.floor(
+                  (data.theses.filter((e) => e.summary).length * 100) /
+                    data.theses.length
+                )
+              }}%
+            </div>
+          </div>
+          <div class="w-full bg-gray-200 rounded-md mb-2">
+            <div
+              class="transition-all text-xs font-medium text-center p-0.5 leading-none rounded-md"
+              :style="
+                'width: ' +
+                Math.floor(
+                  (processed.matches.length * 100) / data.students.length
+                ) +
+                '%'
+              "
+              :class="
+                Math.floor(
+                  (processed.matches.length * 100) / data.students.length
+                ) >= 90
+                  ? 'bg-green-500 text-green-100'
+                  : Math.floor(
+                      (processed.matches.length * 100) / data.students.length
+                    ) >= 50
+                  ? 'bg-sky-700 text-sky-100'
+                  : 'bg-red-500 text-red-100'
+              "
+            >
+              {{
+                Math.floor(
+                  (processed.matches.length * 100) / data.students.length
+                )
+              }}%
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <ChartsLineChart />
-    <ChartsTreeChart />
+    <div v-if="processed.years && processed.matches">
+      <div v-for="(year, yearIndex) in processed.years" :key="yearIndex">
+        <span>{{ year }}</span>
+        <ChartsTreeChart :year="year" :data="processed.matches" />
+      </div>
+    </div>
   </main>
 </template>

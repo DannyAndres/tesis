@@ -5,8 +5,10 @@ export default defineNuxtConfig({
   buildModules: ['@nuxtjs/tailwindcss', '@pinia/nuxt'],
   publicRuntimeConfig: {
     FIREBASE_API_KEY: process.env.FIREBASE_API_KEY,
+    TESS_ENV: process.env.TESS_ENV,
   },
   privateRuntimeConfig: {
     FIREBASE_API_KEY: process.env.FIREBASE_API_KEY,
+    TESS_ENV: process.env.TESS_ENV,
   },
 });

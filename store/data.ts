@@ -57,5 +57,24 @@ export const useDataStore = defineStore('dataStore', {
     updateTheses(theses: Array<Thesis>) {
       this.theses = theses;
     },
+    addThesis(thesis: Thesis) {
+      // @ts-ignore
+      if (thesis !== 'error') {
+        if (!this.theses) {
+          this.theses = [thesis];
+        } else {
+          if (this.theses.find((e) => e.student === thesis.student)) {
+            this.theses = this.theses.map((e) => {
+              if (e.student === thesis.student) {
+                e = thesis;
+              }
+              return e;
+            });
+          } else {
+            this.theses.push(thesis);
+          }
+        }
+      }
+    },
   },
 });
